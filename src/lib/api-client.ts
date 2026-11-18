@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { env } from "./env";
 import { useAuthStore } from "@/stores/auth-store";
+import type { ApiError } from "@/types/api";
 
 /** Axios instance dùng chung. Tự gắn JWT và logout khi 401. */
 export const api = axios.create({
@@ -24,11 +25,18 @@ api.interceptors.response.use(
   },
 );
 
+export function getErrorStatus(error: unknown): number | undefined {
+  return axios.isAxiosError(error) ? error.response?.status : undefined;
+}
+
+export function getErrorData<T = ApiError>(error: unknown): T | undefined {
+  return axios.isAxiosError(error) ? (error.response?.data as T) : undefined;
+}
+
 /** Lấy message lỗi thân thiện từ response backend. */
 export function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
-    const data = error.response?.data as { message?: string } | undefined;
-    return data?.message ?? error.message;
+    return getErrorData(error)?.message ?? error.message;
   }
   return "Đã có lỗi xảy ra";
 }

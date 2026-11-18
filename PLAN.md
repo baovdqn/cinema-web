@@ -1,52 +1,59 @@
 # Kế hoạch Frontend — cinema-web
 
-Mỗi Phase là một đơn vị giao cho 1 agent code. Hoàn thành phase → `typecheck` + `lint` + `build` pass → commit.
+Backend: `baovdqn/cinema-booking` (Spring Boot). Hợp đồng API + quy tắc nghiệp vụ: **`docs/backend-contract.md`** — đọc trước khi code.
+Backend đang ở Phase 1 (Catalog), mới có `GET /movies`. FE đi trước nên các phase cần API chưa có sẽ dùng **mock (MSW)**.
+
+Mỗi Phase giao cho 1 agent code. Xong phase → `typecheck` + `lint` + `build` pass → commit.
 
 ## Phase 0 — Khung dự án ✅
 - [x] Next.js 15 + TS + Tailwind v4, cấu trúc `features/`
-- [x] axios client + JWT interceptor, React Query provider, auth store (zustand persist)
-- [x] Types DTO (`src/types/api.ts`), API + hooks cho auth / movies / showtimes / booking
-- [x] Route skeleton cho tất cả trang, `AuthGuard`, Header/Footer
+- [x] axios client + JWT interceptor, proxy `/api` → backend, React Query, auth store
+- [x] Types theo data model backend, API + hooks cho auth / movies / showtimes / booking
+- [x] Route skeleton, `AuthGuard`, Header/Footer
 
-## Phase 0.5 — Đồng bộ với backend (CẦN thông tin từ backend)
-- [ ] Cập nhật `src/types/api.ts` theo DTO thật (hoặc sinh từ OpenAPI bằng `openapi-typescript`)
-- [ ] Sửa các endpoint `// TODO: khớp endpoint` trong `features/*/api.ts`
-- [ ] Xác nhận: format phân trang, format lỗi, cơ chế auth (access + refresh token?), CORS
-- [ ] (Tuỳ chọn) MSW mock nếu backend chưa chạy được local
+## Phase 1 — Mock API (MSW)
+- [ ] Cài `msw`, bật bằng `NEXT_PUBLIC_API_MOCKING=enabled` (chỉ dev, browser worker)
+- [ ] Handlers cho mọi endpoint ❌/🚧 trong `docs/backend-contract.md` (passthrough `GET /movies` nếu backend chạy)
+- [ ] Dữ liệu mẫu: ~8 phim, 3 rạp, phòng 10 hàng × 12 ghế (hàng cuối COUPLE, giữa VIP), suất chiếu 7 ngày tới
+- [ ] Mô phỏng: 409 ghế bị giữ, 409 đã có booking active, hold hết hạn 8', pay ngẫu nhiên 200 / 202 PAYING / từ chối
 
-## Phase 1 — Auth
-- [ ] `/login`: form react-hook-form + `loginSchema`, hiển thị lỗi, đọc `?redirect=` rồi quay lại
-- [ ] `/register`: form + `registerSchema`
-- [ ] Header: menu user (dropdown), ẩn/hiện theo trạng thái đăng nhập, tránh hydration mismatch
-- [ ] (Nếu backend có) refresh token: interceptor retry 1 lần khi 401
+## Phase 2 — Auth (UC1)
+- [ ] `/login`: react-hook-form + `loginSchema` + `useLogin`, đọc `?redirect=`
+- [ ] `/register`: `registerSchema` + `useRegister`
+- [ ] Header: menu user, tránh hydration mismatch với zustand persist
+- [ ] Link "Admin" khi `role === "ADMIN"`
 
-## Phase 2 — Duyệt phim
-- [ ] Trang chủ: hero banner (phim nổi bật), tab "Đang chiếu" / "Sắp chiếu"
-- [ ] `/movies`: search (debounce), filter status/thể loại, phân trang, sync state lên URL search params
-- [ ] `/movies/[id]`: poster, info, mô tả, trailer (modal YouTube)
-- [ ] Chọn ngày (7 ngày tới) → list suất chiếu nhóm theo rạp → click giờ → `/showtimes/[id]/seats`
-- [ ] Skeleton loading, empty state, error state dùng chung
+## Phase 3 — Duyệt phim (UC2, UC3)
+- [ ] Trang chủ: hero (phim nổi bật) + tab "Đang chiếu" / "Sắp chiếu"
+- [ ] `/movies`: search tên (client-side), filter status, sync URL search params
+- [ ] `/movies/[id]`: poster, info. Chọn ngày (7 ngày tới) → suất chiếu nhóm theo rạp, giờ hiển thị theo `Asia/Ho_Chi_Minh` (dayjs + timezone plugin)
+- [ ] Ẩn/disable suất đã đóng bán (< 15' trước giờ chiếu)
+- [ ] Skeleton / empty / error state dùng chung
 
-## Phase 3 — Chọn ghế (phần quan trọng nhất)
-- [ ] `SeatMap`: lưới theo row/number, màu theo `type` (STANDARD/VIP/COUPLE) và `status` (AVAILABLE/HELD/BOOKED)
-- [ ] Toggle chọn ghế qua `useSeatSelection` (tối đa 8), ghế COUPLE chọn theo cặp
-- [ ] Màn hình chiếu, legend, responsive (scroll ngang trên mobile)
-- [ ] Sidebar tóm tắt: phim, rạp, giờ, ghế đã chọn, tổng tiền
-- [ ] "Tiếp tục" → `useCreateBooking` → `/checkout/[bookingId]`; xử lý lỗi 409 (ghế vừa bị người khác giữ) → refetch seats + toast
-- [ ] Polling 10s đã có sẵn; nếu backend có WebSocket/SSE thì thay thế
+## Phase 4 — Sơ đồ ghế & giữ ghế (UC4, UC5) — quan trọng nhất
+- [ ] `SeatMap`: lưới theo `seatRow`/`seatNumber`, màu theo `seatType` và `status` (AVAILABLE/HELD/SOLD), màn hình, legend, scroll ngang mobile
+- [ ] Chọn tối đa 4 ghế (`useSeatSelection`), ghế COUPLE chọn theo cặp
+- [ ] Sidebar: phim, rạp, giờ, ghế, tổng tiền (`formatVnd`)
+- [ ] "Giữ ghế" → `useHoldSeats` → `/checkout/[bookingId]`
+- [ ] Xử lý 409: (a) ghế bị chiếm → tô lại ghế + bỏ khỏi selection; (b) booking active → dialog "Tiếp tục thanh toán" / "Đổi ghế"
+- [ ] Polling 10s (đã có)
 
-## Phase 4 — Thanh toán & vé
-- [ ] `/checkout/[bookingId]`: tóm tắt đơn, countdown theo `expiresAt` (hết giờ → báo & quay lại), chọn phương thức
-- [ ] Gọi `pay` → redirect `paymentUrl` (VNPay/MoMo) hoặc trang kết quả
-- [ ] `/payment/result`: đọc query params từ cổng thanh toán, hiển thị thành công/thất bại
-- [ ] `/my-bookings`: list vé, filter trạng thái, chi tiết vé + QR code (`qrcode.react`), huỷ vé
+## Phase 5 — Thanh toán (UC6, UC8)
+- [ ] `/checkout/[bookingId]`: tóm tắt, đếm ngược từ `expiresAt`, cảnh báo 2' và 1', < 30s disable nút
+- [ ] Thanh toán: 1 `Idempotency-Key` cho mỗi lần bấm (giữ nguyên khi retry do mạng), xử lý 200/202/409
+- [ ] UI theo bảng trạng thái booking trong `docs/backend-contract.md` (PAYING poll 3s đã có trong `useBooking`)
+- [ ] Nút "Huỷ giữ ghế" (UC8) có xác nhận
 
-## Phase 5 — Admin (tuỳ backend)
-- [ ] Layout `/admin` + guard role ADMIN
-- [ ] CRUD phim, rạp/phòng, suất chiếu; danh sách booking; thống kê doanh thu
+## Phase 6 — Vé & lịch sử (UC7)
+- [ ] `/my-bookings`: list, filter trạng thái
+- [ ] Chi tiết booking CONFIRMED: vé QR từng ghế (`qrcode.react`, nội dung `ticketCode`)
 
-## Phase 6 — Hoàn thiện
-- [ ] Toast toàn cục (vd. `sonner`), error boundary (`error.tsx`), `loading.tsx` cho từng route
-- [ ] SEO metadata cho trang phim, `next/image` cho poster
-- [ ] Test: Vitest + Testing Library cho store/component chính; Playwright e2e luồng đặt vé
-- [ ] Dockerfile + CI (lint/typecheck/build)
+## Phase 7 — Admin (UC9)
+- [ ] Layout `/admin` + guard `role === "ADMIN"`
+- [ ] CRUD phim (upload poster), rạp, phòng (+ sơ đồ ghế), suất chiếu
+
+## Phase 8 — Hoàn thiện
+- [ ] Toast (`sonner`), `error.tsx`, `loading.tsx`
+- [ ] SEO metadata trang phim
+- [ ] Vitest cho store/logic đếm ngược; Playwright e2e luồng đặt vé (chạy với MSW)
+- [ ] Dockerfile, thêm service `web` vào docker-compose của backend (tuỳ chọn)

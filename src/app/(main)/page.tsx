@@ -7,7 +7,7 @@ import { getErrorMessage } from "@/lib/api-client";
 
 // TODO (Phase 2): hero banner, tab Đang chiếu / Sắp chiếu
 export default function HomePage() {
-  const { data, isLoading, error } = useMovies({ status: "NOW_SHOWING", size: 12 });
+  const { data, isLoading, error } = useMovies({ status: "NOW_SHOWING" });
 
   return (
     <section>
@@ -15,7 +15,7 @@ export default function HomePage() {
       {isLoading && <Spinner />}
       {error && <p className="text-red-400">{getErrorMessage(error)}</p>}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {data?.content.map((m) => <MovieCard key={m.id} movie={m} />)}
+        {data?.map((m) => <MovieCard key={m.id} movie={m} />)}
       </div>
     </section>
   );

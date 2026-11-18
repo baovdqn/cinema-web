@@ -1,13 +1,14 @@
 import { create } from "zustand";
-import type { Seat } from "@/types/api";
+import type { ShowtimeSeat } from "@/types/api";
 
-const MAX_SEATS = 8;
+/** Quy tắc nghiệp vụ backend: tối đa 4 ghế mỗi lần đặt. */
+export const MAX_SEATS = 4;
 
 interface SeatSelectionState {
-  showtimeId: string | null;
-  selected: Seat[];
-  init: (showtimeId: string) => void;
-  toggle: (seat: Seat) => void;
+  showtimeId: number | null;
+  selected: ShowtimeSeat[];
+  init: (showtimeId: number) => void;
+  toggle: (seat: ShowtimeSeat) => void;
   clear: () => void;
 }
 
@@ -19,8 +20,9 @@ export const useSeatSelection = create<SeatSelectionState>((set, get) => ({
   },
   toggle: (seat) =>
     set((s) => {
-      const exists = s.selected.some((x) => x.id === seat.id);
-      if (exists) return { selected: s.selected.filter((x) => x.id !== seat.id) };
+      if (seat.status !== "AVAILABLE") return s;
+      const exists = s.selected.some((x) => x.seatId === seat.seatId);
+      if (exists) return { selected: s.selected.filter((x) => x.seatId !== seat.seatId) };
       if (s.selected.length >= MAX_SEATS) return s;
       return { selected: [...s.selected, seat] };
     }),
