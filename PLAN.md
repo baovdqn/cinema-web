@@ -45,8 +45,8 @@ Mỗi Phase giao cho 1 agent code. Xong phase → `typecheck` + `lint` + `build`
 - [x] Nút "Huỷ giữ ghế" (UC8) có xác nhận
 
 ## Phase 6 — Vé & lịch sử (UC7)
-- [ ] `/my-bookings`: list, filter trạng thái
-- [ ] Chi tiết booking CONFIRMED: vé QR từng ghế (`qrcode.react`, nội dung `ticketCode`)
+- [x] `/my-bookings`: list, filter trạng thái
+- [x] Chi tiết booking CONFIRMED: vé QR từng ghế (`qrcode.react`, nội dung `ticketCode`)
 
 ## Phase 7 — Admin (UC9)
 - [ ] Layout `/admin` + guard `role === "ADMIN"`

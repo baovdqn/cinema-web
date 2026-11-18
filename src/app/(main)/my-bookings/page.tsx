@@ -1,10 +1,13 @@
-// TODO (Phase 4): danh sách vé đã đặt, trạng thái, huỷ vé, hiển thị QR
+import { Suspense } from "react";
 import { AuthGuard } from "@/components/auth-guard";
+import { MyBookings, MyBookingsSkeleton } from "@/features/booking/components/my-bookings";
 
 export default function MyBookingsPage() {
   return (
     <AuthGuard>
-      <h1 className="text-2xl font-bold">Vé của tôi</h1>
+      <Suspense fallback={<MyBookingsSkeleton />}>
+        <MyBookings />
+      </Suspense>
     </AuthGuard>
   );
 }

@@ -28,7 +28,12 @@ export function useBooking(id: string) {
 }
 
 export function useMyBookings() {
-  return useQuery({ queryKey: bookingKeys.mine, queryFn: bookingApi.mine });
+  return useQuery({
+    queryKey: bookingKeys.mine,
+    queryFn: bookingApi.mine,
+    // Còn booking PAYING thì poll 3s cho tới khi có kết quả.
+    refetchInterval: (q) => (q.state.data?.some((b) => b.status === "PAYING") ? 3_000 : false),
+  });
 }
 
 export function useCancelBooking() {
