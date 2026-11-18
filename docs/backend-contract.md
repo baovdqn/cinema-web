@@ -45,3 +45,11 @@ Tên endpoint ❌/🚧 là FE đề xuất — khi backend làm xong thì sửa 
 - `Movie` hiện chưa có mô tả, thể loại, trailer. Poster là `posterKey` (S3) → cần base URL hoặc presigned URL.
 - Body lỗi thống nhất `{ status, message, code }`; `409` giữ ghế kèm `conflictedSeatIds` / `activeBooking`.
 - Bật CORS cho `http://localhost:3000` (hoặc giữ proxy của Next).
+
+## Mock (MSW)
+Khi `NEXT_PUBLIC_API_MOCKING=enabled`, trình duyệt chạy MSW (`src/mocks/`) và chặn mọi endpoint ở bảng trên (kể cả `GET /movies`); trạng thái nằm trong bộ nhớ, reload là reset. Tắt: bỏ biến này (hoặc đặt khác `enabled`) rồi restart `npm run dev`.
+
+Tài khoản test (mật khẩu `123456`): `user@cinema.vn` (CUSTOMER), `admin@cinema.vn` (ADMIN). Token giả: `mock-token-<userId>`.
+
+- `POST /bookings/{id}/pay?outcome=success|declined|pending` ép kết quả (mặc định ngẫu nhiên 70% / 15% / 15%): `success` → 200 `CONFIRMED`; `declined` → 200 vẫn `HELD` (lý do "Thẻ bị từ chối" ở header `X-Payment-Message`, URL-encoded); `pending` → 202 `PAYING`, ~6 giây sau tự thành `CONFIRMED`. Cùng `Idempotency-Key` trả lại đúng kết quả cũ. `bookingApi.pay(id, key, outcome?)` có tham số tuỳ chọn này.
+- Hold hết hạn xử lý lười (khi đọc booking/ghế). Dữ liệu ghế SOLD/HELD ban đầu sinh theo seed nên ổn định giữa các lần reload.

@@ -11,11 +11,11 @@ Mỗi Phase giao cho 1 agent code. Xong phase → `typecheck` + `lint` + `build`
 - [x] Types theo data model backend, API + hooks cho auth / movies / showtimes / booking
 - [x] Route skeleton, `AuthGuard`, Header/Footer
 
-## Phase 1 — Mock API (MSW)
-- [ ] Cài `msw`, bật bằng `NEXT_PUBLIC_API_MOCKING=enabled` (chỉ dev, browser worker)
-- [ ] Handlers cho mọi endpoint ❌/🚧 trong `docs/backend-contract.md` (passthrough `GET /movies` nếu backend chạy)
-- [ ] Dữ liệu mẫu: ~8 phim, 3 rạp, phòng 10 hàng × 12 ghế (hàng cuối COUPLE, giữa VIP), suất chiếu 7 ngày tới
-- [ ] Mô phỏng: 409 ghế bị giữ, 409 đã có booking active, hold hết hạn 8', pay ngẫu nhiên 200 / 202 PAYING / từ chối
+## Phase 1 — Mock API (MSW) ✅
+- [x] Cài `msw`, bật bằng `NEXT_PUBLIC_API_MOCKING=enabled` (chỉ dev, browser worker)
+- [x] Handlers cho mọi endpoint ❌/🚧 trong `docs/backend-contract.md` (passthrough `GET /movies` nếu backend chạy)
+- [x] Dữ liệu mẫu: ~8 phim, 3 rạp, phòng 10 hàng × 12 ghế (hàng cuối COUPLE, giữa VIP), suất chiếu 7 ngày tới
+- [x] Mô phỏng: 409 ghế bị giữ, 409 đã có booking active, hold hết hạn 8', pay ngẫu nhiên 200 / 202 PAYING / từ chối
 
 ## Phase 2 — Auth (UC1)
 - [ ] `/login`: react-hook-form + `loginSchema` + `useLogin`, đọc `?redirect=`

@@ -15,9 +15,13 @@ export const bookingApi = {
   /** UC8: huỷ giữ ghế khi chưa thanh toán */
   cancel: (id: string) => api.post<Booking>(`/bookings/${id}/cancel`).then((r) => r.data),
   /** UC6: thanh toán giả lập. 200 -> CONFIRMED/HELD(bị từ chối), 202 -> PAYING (poll lại), 409 -> còn < 30s */
-  pay: (id: string, idempotencyKey: string) =>
+  pay: (id: string, idempotencyKey: string, outcome?: "success" | "declined" | "pending") =>
     api
-      .post<Booking>(`/bookings/${id}/pay`, null, { headers: { "Idempotency-Key": idempotencyKey } })
+      .post<Booking>(`/bookings/${id}/pay`, null, {
+        headers: { "Idempotency-Key": idempotencyKey },
+        // Chỉ mock (MSW) đọc `outcome`; backend thật bỏ qua.
+        params: outcome ? { outcome } : undefined,
+      })
       .then((r) => ({ status: r.status, booking: r.data })),
   tickets: (id: string) => api.get<Ticket[]>(`/bookings/${id}/tickets`).then((r) => r.data),
 };
