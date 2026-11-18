@@ -1,4 +1,10 @@
-// TODO (Phase 1): form đăng ký (registerSchema + useRegister)
+import { Suspense } from "react";
+import { RegisterForm } from "@/features/auth/components/register-form";
+
 export default function RegisterPage() {
-  return <h1 className="text-xl font-bold">Đăng ký</h1>;
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
+  );
 }

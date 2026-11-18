@@ -17,18 +17,18 @@ Mỗi Phase giao cho 1 agent code. Xong phase → `typecheck` + `lint` + `build`
 - [x] Dữ liệu mẫu: ~8 phim, 3 rạp, phòng 10 hàng × 12 ghế (hàng cuối COUPLE, giữa VIP), suất chiếu 7 ngày tới
 - [x] Mô phỏng: 409 ghế bị giữ, 409 đã có booking active, hold hết hạn 8', pay ngẫu nhiên 200 / 202 PAYING / từ chối
 
-## Phase 2 — Auth (UC1)
-- [ ] `/login`: react-hook-form + `loginSchema` + `useLogin`, đọc `?redirect=`
-- [ ] `/register`: `registerSchema` + `useRegister`
-- [ ] Header: menu user, tránh hydration mismatch với zustand persist
-- [ ] Link "Admin" khi `role === "ADMIN"`
+## Phase 2 — Auth (UC1) ✅
+- [x] `/login`: react-hook-form + `loginSchema` + `useLogin`, đọc `?redirect=`
+- [x] `/register`: `registerSchema` + `useRegister`
+- [x] Header: menu user, tránh hydration mismatch với zustand persist
+- [x] Link "Admin" khi `role === "ADMIN"`
 
-## Phase 3 — Duyệt phim (UC2, UC3)
-- [ ] Trang chủ: hero (phim nổi bật) + tab "Đang chiếu" / "Sắp chiếu"
-- [ ] `/movies`: search tên (client-side), filter status, sync URL search params
-- [ ] `/movies/[id]`: poster, info. Chọn ngày (7 ngày tới) → suất chiếu nhóm theo rạp, giờ hiển thị theo `Asia/Ho_Chi_Minh` (dayjs + timezone plugin)
-- [ ] Ẩn/disable suất đã đóng bán (< 15' trước giờ chiếu)
-- [ ] Skeleton / empty / error state dùng chung
+## Phase 3 — Duyệt phim (UC2, UC3) ✅
+- [x] Trang chủ: hero (phim nổi bật) + tab "Đang chiếu" / "Sắp chiếu"
+- [x] `/movies`: search tên (client-side), filter status, sync URL search params
+- [x] `/movies/[id]`: poster, info. Chọn ngày (7 ngày tới) → suất chiếu nhóm theo rạp, giờ hiển thị theo `Asia/Ho_Chi_Minh` (dayjs + timezone plugin)
+- [x] Ẩn/disable suất đã đóng bán (< 15' trước giờ chiếu)
+- [x] Skeleton / empty / error state dùng chung
 
 ## Phase 4 — Sơ đồ ghế & giữ ghế (UC4, UC5) — quan trọng nhất
 - [ ] `SeatMap`: lưới theo `seatRow`/`seatNumber`, màu theo `seatType` và `status` (AVAILABLE/HELD/SOLD), màn hình, legend, scroll ngang mobile

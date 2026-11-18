@@ -1,4 +1,10 @@
-// TODO (Phase 1): form login (react-hook-form + zod loginSchema + useLogin, đọc ?redirect=)
+import { Suspense } from "react";
+import { LoginForm } from "@/features/auth/components/login-form";
+
 export default function LoginPage() {
-  return <h1 className="text-xl font-bold">Đăng nhập</h1>;
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
 }

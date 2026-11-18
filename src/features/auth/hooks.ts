@@ -17,14 +17,14 @@ export function useLogin(redirectTo = "/") {
   });
 }
 
-export function useRegister() {
+export function useRegister(redirectTo = "/") {
   const setAuth = useAuthStore((s) => s.setAuth);
   const router = useRouter();
   return useMutation({
     mutationFn: authApi.register,
     onSuccess: (data) => {
       setAuth(data.accessToken, data.user);
-      router.push("/");
+      router.push(redirectTo);
     },
   });
 }

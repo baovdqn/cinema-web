@@ -1,5 +1,12 @@
-// TODO (Phase 2): chi tiết phim (poster, mô tả, trailer) + chọn ngày + list suất chiếu theo rạp
+import { Suspense } from "react";
+import { MovieDetail } from "@/features/movies/components/movie-detail";
+import { Skeleton } from "@/components/ui/skeleton";
+
 export default async function MovieDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  return <h1 className="text-2xl font-bold">Chi tiết phim #{id}</h1>;
+  return (
+    <Suspense fallback={<Skeleton className="h-96 w-full" />}>
+      <MovieDetail id={id} />
+    </Suspense>
+  );
 }
