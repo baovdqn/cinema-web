@@ -30,19 +30,19 @@ Mỗi Phase giao cho 1 agent code. Xong phase → `typecheck` + `lint` + `build`
 - [x] Ẩn/disable suất đã đóng bán (< 15' trước giờ chiếu)
 - [x] Skeleton / empty / error state dùng chung
 
-## Phase 4 — Sơ đồ ghế & giữ ghế (UC4, UC5) — quan trọng nhất
-- [ ] `SeatMap`: lưới theo `seatRow`/`seatNumber`, màu theo `seatType` và `status` (AVAILABLE/HELD/SOLD), màn hình, legend, scroll ngang mobile
-- [ ] Chọn tối đa 4 ghế (`useSeatSelection`), ghế COUPLE chọn theo cặp
-- [ ] Sidebar: phim, rạp, giờ, ghế, tổng tiền (`formatVnd`)
-- [ ] "Giữ ghế" → `useHoldSeats` → `/checkout/[bookingId]`
-- [ ] Xử lý 409: (a) ghế bị chiếm → tô lại ghế + bỏ khỏi selection; (b) booking active → dialog "Tiếp tục thanh toán" / "Đổi ghế"
-- [ ] Polling 10s (đã có)
+## Phase 4 — Sơ đồ ghế & giữ ghế (UC4, UC5) — quan trọng nhất ✅
+- [x] `SeatMap`: lưới theo `seatRow`/`seatNumber`, màu theo `seatType` và `status` (AVAILABLE/HELD/SOLD), màn hình, legend, scroll ngang mobile
+- [x] Chọn tối đa 4 ghế (`useSeatSelection`), ghế COUPLE chọn theo cặp
+- [x] Sidebar: phim, rạp, giờ, ghế, tổng tiền (`formatVnd`)
+- [x] "Giữ ghế" → `useHoldSeats` → `/checkout/[bookingId]`
+- [x] Xử lý 409: (a) ghế bị chiếm → tô lại ghế + bỏ khỏi selection; (b) booking active → dialog "Tiếp tục thanh toán" / "Đổi ghế"
+- [x] Polling 10s (đã có)
 
-## Phase 5 — Thanh toán (UC6, UC8)
-- [ ] `/checkout/[bookingId]`: tóm tắt, đếm ngược từ `expiresAt`, cảnh báo 2' và 1', < 30s disable nút
-- [ ] Thanh toán: 1 `Idempotency-Key` cho mỗi lần bấm (giữ nguyên khi retry do mạng), xử lý 200/202/409
-- [ ] UI theo bảng trạng thái booking trong `docs/backend-contract.md` (PAYING poll 3s đã có trong `useBooking`)
-- [ ] Nút "Huỷ giữ ghế" (UC8) có xác nhận
+## Phase 5 — Thanh toán (UC6, UC8) ✅
+- [x] `/checkout/[bookingId]`: tóm tắt, đếm ngược từ `expiresAt`, cảnh báo 2' và 1', < 30s disable nút
+- [x] Thanh toán: 1 `Idempotency-Key` cho mỗi lần bấm (giữ nguyên khi retry do mạng), xử lý 200/202/409
+- [x] UI theo bảng trạng thái booking trong `docs/backend-contract.md` (PAYING poll 3s đã có trong `useBooking`)
+- [x] Nút "Huỷ giữ ghế" (UC8) có xác nhận
 
 ## Phase 6 — Vé & lịch sử (UC7)
 - [ ] `/my-bookings`: list, filter trạng thái

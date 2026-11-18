@@ -1,7 +1,8 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { bookingApi } from "./api";
+import { getErrorStatus } from "@/lib/api-client";
+import { bookingApi, type PayOutcome } from "./api";
 
 export const bookingKeys = {
   mine: ["bookings", "mine"] as const,
@@ -39,4 +40,23 @@ export function useCancelBooking() {
       qc.invalidateQueries({ queryKey: ["showtimes", "seats"] });
     },
   });
+}
+
+/** Thanh toán giả lập. Idempotency-Key do caller giữ (1 key / lần bấm, giữ nguyên khi retry do mạng). */
+export function usePayBooking(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (v: { idempotencyKey: string; outcome?: PayOutcome }) =>
+      bookingApi.pay(id, v.idempotencyKey, v.outcome),
+    onSuccess: (r) => qc.setQueryData(bookingKeys.detail(id), r.booking),
+    onError: (e) => {
+      // Có response (vd 409) thì booking có thể đã đổi -> đọc lại.
+      if (getErrorStatus(e) !== undefined) qc.invalidateQueries({ queryKey: bookingKeys.detail(id) });
+    },
+  });
+}
+
+/** Vé của booking — chỉ gọi khi CONFIRMED. */
+export function useTickets(id: string, enabled: boolean) {
+  return useQuery({ queryKey: bookingKeys.tickets(id), queryFn: () => bookingApi.tickets(id), enabled });
 }
