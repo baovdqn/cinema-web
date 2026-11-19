@@ -52,8 +52,9 @@ Mỗi Phase giao cho 1 agent code. Xong phase → `typecheck` + `lint` + `build`
 - [x] Layout `/admin` + guard `role === "ADMIN"`
 - [x] CRUD phim (upload poster), rạp, phòng (+ sơ đồ ghế), suất chiếu
 
-## Phase 8 — Hoàn thiện
-- [ ] Toast (`sonner`), `error.tsx`, `loading.tsx`
-- [ ] SEO metadata trang phim
-- [ ] Vitest cho store/logic đếm ngược; Playwright e2e luồng đặt vé (chạy với MSW)
-- [ ] Dockerfile, thêm service `web` vào docker-compose của backend (tuỳ chọn)
+## Phase 8 — Hoàn thiện ✅
+- [x] Toast (component tự viết `components/ui/toast.tsx`, góc dưới phải), `error.tsx`, `loading.tsx`
+- [x] SEO metadata (root, từng trang, `generateMetadata` trang phim, robots, sitemap)
+- [x] Vitest cho store/logic đếm ngược; Playwright e2e luồng đặt vé (chạy với MSW)
+- [x] Dockerfile, thêm service `web` vào docker-compose của backend (tuỳ chọn) — xem `docs/docker.md`
+- [x] CI GitHub Actions (typecheck, lint, test, build, e2e)
