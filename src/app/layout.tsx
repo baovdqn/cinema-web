@@ -7,9 +7,20 @@ import "./globals.css";
 
 const font = Be_Vietnam_Pro({ subsets: ["latin", "vietnamese"], weight: ["400", "500", "600", "700"] });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const description = "Đặt vé xem phim online nhanh chóng: chọn phim, suất chiếu, ghế ngồi và thanh toán trong vài phút.";
+
 export const metadata: Metadata = {
-  title: "CinemaX — Đặt vé xem phim",
-  description: "Đặt vé xem phim online",
+  metadataBase: new URL(siteUrl),
+  title: { default: "CinemaX — Đặt vé xem phim", template: "%s | CinemaX" },
+  description,
+  openGraph: {
+    type: "website",
+    siteName: "CinemaX",
+    locale: "vi_VN",
+    title: "CinemaX — Đặt vé xem phim",
+    description,
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
