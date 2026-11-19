@@ -17,8 +17,18 @@ FE gọi `/api/*`, Next rewrite sang `BACKEND_URL` (xem `next.config.ts`).
 | `GET /bookings/{id}`, `POST /bookings/{id}/cancel` | ❌ Phase 4b/4d | checkout |
 | `POST /bookings/{id}/pay` (header `Idempotency-Key`) | ❌ Phase 4c | checkout |
 | `GET /bookings/me`, `GET /bookings/{id}/tickets` | ❌ Phase 4e | vé của tôi |
+| `GET /admin/stats` → `{ nowShowingMovies, activeCinemas, showtimesToday, confirmedBookings, revenue }` | ❌ FE đề xuất | `/admin` |
+| `GET/POST /admin/movies`, `PUT/DELETE /admin/movies/{id}` (DELETE → 409 nếu phim đã có suất chiếu) | ❌ FE đề xuất | `/admin/movies` |
+| `POST /admin/uploads/poster` (multipart, field `file`) → `{ posterKey }` | ❌ FE đề xuất | form phim |
+| `GET/POST /admin/cinemas`, `PUT /admin/cinemas/{id}`, `DELETE /admin/cinemas/{id}` (soft delete `isActive=false`) | ❌ FE đề xuất | `/admin/cinemas` |
+| `GET/POST /admin/cinemas/{id}/rooms` (POST body `{ name, layout: { rows, seatsPerRow, vipRows[], lastRowCouple } }`, backend sinh `seat`) | ❌ FE đề xuất | `/admin/cinemas/[id]` |
+| `PATCH /admin/rooms/{id}` (`{ name?, isActive? }`), `DELETE /admin/rooms/{id}` (soft delete) | ❌ FE đề xuất | `/admin/cinemas/[id]` |
+| `GET /admin/showtimes?cinemaId=&date=YYYY-MM-DD&movieId=` | ❌ FE đề xuất | `/admin/showtimes` |
+| `POST /admin/showtimes` (`{ movieId, roomId, startTime, prices: { STANDARD, VIP, COUPLE } }`; 409 trùng giờ phòng, 400 quá khứ), `DELETE /admin/showtimes/{id}` (409 nếu đã có ghế bán) | ❌ FE đề xuất | `/admin/showtimes` |
 
 Tên endpoint ❌/🚧 là FE đề xuất — khi backend làm xong thì sửa lại cho khớp.
+
+Mọi `/admin/*` yêu cầu JWT role `ADMIN` (401 chưa đăng nhập, 403 không phải ADMIN). Tạo suất chiếu: `endTime = startTime + durationMinutes`; backend sinh `showtime_seat` kèm giá theo loại ghế; phòng không được chồng suất (EXCLUDE constraint → `409`). Poster upload trả `posterKey`; mock trả data URL, `getPosterUrl()` cho qua `http(s):`, `data:`, `blob:`.
 
 ## Quy tắc nghiệp vụ FE phải phản ánh
 - Tối đa **4 ghế**/lần, 1 suất. Giữ ghế all-or-nothing, **8 phút**, không gia hạn.

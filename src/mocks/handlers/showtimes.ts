@@ -1,8 +1,8 @@
 import { http, HttpResponse } from "msw";
 import { env } from "@/lib/env";
 import type { ShowtimeSeat } from "@/types/api";
-import { ICT_OFFSET_MS, seatTemplates } from "../data";
-import { db, getSeatState, sweepExpired } from "../db";
+import { ICT_OFFSET_MS } from "../data";
+import { db, getSeatState, showtimeSeats, sweepExpired } from "../db";
 import { errorResponse, readDelay } from "../utils";
 
 const base = env.apiBaseUrl;
@@ -16,8 +16,11 @@ export const showtimeHandlers = [
     const q = new URL(request.url).searchParams;
     const movieId = q.get("movieId");
     const date = q.get("date");
+    const isActive = (s: (typeof db.showtimes)[number]) =>
+      db.cinemas.find((c) => c.id === s.cinema.id)?.isActive !== false &&
+      db.rooms.find((r) => r.id === s.room.id)?.isActive !== false;
     const list = db.showtimes.filter(
-      (s) => (!movieId || s.movieId === Number(movieId)) && (!date || ictDate(s.startTime) === date),
+      (s) => isActive(s) && (!movieId || s.movieId === Number(movieId)) && (!date || ictDate(s.startTime) === date),
     );
     return HttpResponse.json(list);
   }),
@@ -34,17 +37,10 @@ export const showtimeHandlers = [
     const showtime = db.showtimes.find((s) => s.id === Number(params.id));
     if (!showtime) return errorResponse(404, "Không tìm thấy suất chiếu");
     const state = getSeatState(showtime.id);
-    const seats: ShowtimeSeat[] = seatTemplates.map((t) => {
-      const seatId = showtime.room.id * 1000 + t.index;
-      return {
-        seatId,
-        seatRow: t.seatRow,
-        seatNumber: t.seatNumber,
-        seatType: t.seatType,
-        status: state.get(seatId) ?? "AVAILABLE",
-        price: t.price,
-      };
-    });
+    const seats: ShowtimeSeat[] = showtimeSeats(showtime).map((t) => ({
+      ...t,
+      status: state.get(t.seatId) ?? "AVAILABLE",
+    }));
     return HttpResponse.json(seats);
   }),
 ];

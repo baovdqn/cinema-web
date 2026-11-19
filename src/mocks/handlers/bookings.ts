@@ -1,8 +1,8 @@
 import { delay, http, HttpResponse } from "msw";
 import { env } from "@/lib/env";
 import type { Booking, HoldConflict, Ticket } from "@/types/api";
-import { HOLD_MINUTES, MS_MINUTE, SALES_CLOSE_MINUTES, seatTemplates } from "../data";
-import { db, getSeatState, releaseSeats, sellSeats, sweepExpired, toPublic, type StoredBooking } from "../db";
+import { HOLD_MINUTES, MS_MINUTE, SALES_CLOSE_MINUTES } from "../data";
+import { db, getSeatState, releaseSeats, sellSeats, showtimeSeats, sweepExpired, toPublic, type StoredBooking } from "../db";
 import { authUser, errorResponse, readDelay, unauthorized } from "../utils";
 
 const base = env.apiBaseUrl;
@@ -58,7 +58,8 @@ export const bookingHandlers = [
     const salesClose = start - SALES_CLOSE_MINUTES * MS_MINUTE;
     if (now > salesClose - PAY_MIN_MS) return errorResponse(409, "Suất này sắp đóng bán vé");
 
-    const templates = seatIds.map((id) => seatTemplates.find((t) => showtime.room.id * 1000 + t.index === id));
+    const roomSeats = showtimeSeats(showtime);
+    const templates = seatIds.map((id) => roomSeats.find((t) => t.seatId === id));
     if (templates.some((t) => !t)) return errorResponse(400, "Ghế không thuộc phòng chiếu của suất này");
 
     const active = db.bookings.find(

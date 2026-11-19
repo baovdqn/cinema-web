@@ -122,3 +122,95 @@ export interface Ticket {
   ticketCode: string; // UUID — nội dung QR
   issuedAt: string;
 }
+
+// ---------- Admin (UC9) — FE đề xuất, backend chưa có ----------
+// TODO: khớp endpoint với backend (xem bảng "/admin/*" trong docs/backend-contract.md)
+
+export interface MovieInput {
+  title: string;
+  durationMinutes: number;
+  releaseDate: string; // "YYYY-MM-DD"
+  status: MovieStatus;
+  posterKey: string | null;
+}
+
+export interface PosterUploadResult {
+  posterKey: string;
+}
+
+export interface CinemaInput {
+  name: string;
+  address: string;
+  city: string;
+  isActive?: boolean;
+}
+
+export interface AdminCinema extends Cinema {
+  isActive: boolean;
+  roomCount: number;
+}
+
+/** Cấu hình sinh sơ đồ ghế khi tạo phòng. Hàng đặt tên A, B, C... */
+export interface SeatLayout {
+  rows: number;
+  seatsPerRow: number;
+  /** Các hàng (chữ cái) là ghế VIP. */
+  vipRows: string[];
+  /** Hàng cuối là ghế đôi (cần seatsPerRow chẵn). */
+  lastRowCouple: boolean;
+}
+
+export interface RoomInput {
+  name: string;
+  layout: SeatLayout;
+}
+
+export interface RoomUpdate {
+  name?: string;
+  isActive?: boolean;
+}
+
+export interface AdminSeat {
+  seatRow: string;
+  seatNumber: number;
+  seatType: SeatType;
+}
+
+export interface AdminRoom {
+  id: Id;
+  cinemaId: Id;
+  name: string;
+  isActive: boolean;
+  seatCount: number;
+  seats: AdminSeat[];
+}
+
+export type SeatPrices = Record<SeatType, number>;
+
+export interface ShowtimeInput {
+  movieId: Id;
+  roomId: Id;
+  startTime: string; // ISO UTC
+  prices: SeatPrices;
+}
+
+export interface AdminShowtime extends Showtime {
+  movieTitle: string;
+  totalSeats: number;
+  soldSeats: number;
+  prices: SeatPrices;
+}
+
+export interface AdminShowtimeQuery {
+  cinemaId?: Id;
+  date?: string; // "YYYY-MM-DD" giờ rạp
+  movieId?: Id;
+}
+
+export interface AdminStats {
+  nowShowingMovies: number;
+  activeCinemas: number;
+  showtimesToday: number;
+  confirmedBookings: number;
+  revenue: number;
+}

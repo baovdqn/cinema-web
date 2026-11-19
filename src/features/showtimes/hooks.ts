@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { showtimesApi } from "./api";
 
 export const showtimeKeys = {
+  all: ["showtimes"] as const,
   byMovie: (movieId: string, date: string) => ["showtimes", "movie", movieId, date] as const,
   detail: (id: string) => ["showtimes", "detail", id] as const,
   seats: (id: string) => ["showtimes", "seats", id] as const,

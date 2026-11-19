@@ -41,3 +41,27 @@ export function next7Days(): { value: string; label: string; weekday: string; da
 export function isSalesClosed(startTime: string) {
   return dayjs().isAfter(dayjs(startTime).subtract(SALES_CLOSE_MINUTES, "minute"));
 }
+
+/** Hôm nay "YYYY-MM-DD" theo giờ rạp. */
+export function todayVn() {
+  return dayjs().tz(CINEMA_TZ).format("YYYY-MM-DD");
+}
+
+/** Ngày "YYYY-MM-DD" theo giờ rạp của 1 thời điểm ISO UTC. */
+export function vnDateOf(iso: string) {
+  return dayjs(iso).tz(CINEMA_TZ).format("YYYY-MM-DD");
+}
+
+/** Ngày ("YYYY-MM-DD") + giờ ("HH:mm") nhập theo giờ rạp -> ISO UTC. Trả null nếu không hợp lệ. */
+export function vnLocalToIso(date: string, time: string): string | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(time)) return null;
+  const d = dayjs.tz(`${date} ${time}`, CINEMA_TZ);
+  return d.isValid() ? d.toISOString() : null;
+}
+
+/** Giờ kết thúc "HH:mm" (giờ rạp) = bắt đầu + số phút; kèm "(+1 ngày)" nếu qua nửa đêm. */
+export function formatEndTime(startIso: string, minutes: number) {
+  const start = dayjs(startIso).tz(CINEMA_TZ);
+  const end = start.add(minutes, "minute");
+  return end.format("HH:mm") + (end.format("YYYYMMDD") !== start.format("YYYYMMDD") ? " (+1 ngày)" : "");
+}

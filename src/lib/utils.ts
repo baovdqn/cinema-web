@@ -12,7 +12,7 @@ export function formatVnd(amount: number) {
 
 export function getPosterUrl(posterKey: string | null | undefined) {
   if (!posterKey) return "/poster-placeholder.svg";
-  if (posterKey.startsWith("http")) return posterKey;
+  if (/^(https?:|data:|blob:)/.test(posterKey)) return posterKey;
   return `${env.assetBaseUrl}/${posterKey}`;
 }
 

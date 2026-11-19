@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 /** Dialog modal nhỏ: focus vào hộp thoại, Esc / bấm nền để đóng, Tab không thoát khỏi hộp. */
 export function Dialog({
@@ -9,12 +10,15 @@ export function Dialog({
   title,
   children,
   footer,
+  className,
 }: {
   open: boolean;
   onClose: () => void;
   title: string;
   children?: React.ReactNode;
   footer?: React.ReactNode;
+  /** Ghi đè kích thước hộp thoại, vd "max-w-2xl". */
+  className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId();
@@ -31,7 +35,7 @@ export function Dialog({
       if (e.key === "Escape") {
         onCloseRef.current();
       } else if (e.key === "Tab" && ref.current) {
-        const items = ref.current.querySelectorAll<HTMLElement>("button:not([disabled]), a[href], input, select");
+        const items = ref.current.querySelectorAll<HTMLElement>("button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])");
         if (items.length === 0) return;
         const first = items[0];
         const last = items[items.length - 1];
@@ -65,7 +69,10 @@ export function Dialog({
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="w-full max-w-md rounded-xl border border-neutral-800 bg-neutral-900 p-5 shadow-xl outline-none"
+        className={cn(
+          "max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl border border-neutral-800 bg-neutral-900 p-5 shadow-xl outline-none",
+          className,
+        )}
       >
         <h2 id={titleId} className="text-lg font-semibold">
           {title}

@@ -48,9 +48,9 @@ Mỗi Phase giao cho 1 agent code. Xong phase → `typecheck` + `lint` + `build`
 - [x] `/my-bookings`: list, filter trạng thái
 - [x] Chi tiết booking CONFIRMED: vé QR từng ghế (`qrcode.react`, nội dung `ticketCode`)
 
-## Phase 7 — Admin (UC9)
-- [ ] Layout `/admin` + guard `role === "ADMIN"`
-- [ ] CRUD phim (upload poster), rạp, phòng (+ sơ đồ ghế), suất chiếu
+## Phase 7 — Admin (UC9) ✅
+- [x] Layout `/admin` + guard `role === "ADMIN"`
+- [x] CRUD phim (upload poster), rạp, phòng (+ sơ đồ ghế), suất chiếu
 
 ## Phase 8 — Hoàn thiện
 - [ ] Toast (`sonner`), `error.tsx`, `loading.tsx`
