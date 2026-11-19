@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.github
+.env*
+!.env.example
+Dockerfile
+.dockerignore
+README.md
+docs
+e2e
+test-results
+playwright-report
+coverage
+*.tsbuildinfo
+npm-debug.log*
