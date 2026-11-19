@@ -49,14 +49,14 @@ export function Toaster() {
   return (
     <div
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-0 top-16 z-[60] flex flex-col items-center gap-2 px-4"
+      className="pointer-events-none fixed inset-x-0 bottom-24 z-[60] flex flex-col items-stretch gap-2 px-4 sm:inset-x-auto sm:right-4 sm:w-96 sm:px-0 lg:bottom-4"
     >
       {items.map((t) => (
         <div
           key={t.id}
           role="status"
           className={cn(
-            "pointer-events-auto flex w-full max-w-md items-start gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg",
+            "pointer-events-auto flex w-full items-start gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg",
             KIND_CLASS[t.kind],
           )}
         >
